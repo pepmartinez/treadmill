@@ -1,0 +1,39 @@
+{
+  "name": "treadmill.js",
+  "description": "kafka-like event streams over mongodb capped collections",
+  "version": "1.0.0",
+  "keywords": [
+    "pubsub",
+    "event",
+    "stream",
+    "mongodb"
+  ],
+  "homepage": "https://github.com/pepmartinez/treadmill",
+  "bugs": {
+    "url": "https://github.com/pepmartinez/treadmill/issues",
+    "email": "pep.martinez@gmail.com"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/pepmartineztreadmill.git"
+  },
+  "author": {
+    "name": "Jose Luis Martinez Juan",
+    "email": "pep.martinez@gmail.com"
+  },
+  "license": "GPL-3.0",
+  "dependencies": {
+    "lodash": "~4.17.11",
+    "async": "2.6.1",
+    "mongodb": "~3.2.5",
+    "uuid": "3.3.2",
+    "debug": "~4.1.1"
+  },
+  "devDependencies": {
+    "mocha": "~6.1.0",
+    "should": "~13.2.3"
+  },
+  "scripts": {
+    "test": "mocha --reporter spec --check-leaks --bail --no-timeouts test/"
+  }
+}
