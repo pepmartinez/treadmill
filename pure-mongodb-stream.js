@@ -182,6 +182,9 @@ class StreamConsumer {
     var q = {_id: {q: this._qname, g: this._group}, v: {$lt: this._last_read_id}};
     var upd = {$set: {v: this._last_read_id}};
 
+// TODO cache last _last_read_id, do not attemt update if posterior
+
+
     this._factory._last_ids_processed_coll.findOneAndUpdate (q, upd, (err, res) => {
       if (err) return cb (err);
       var ok = res.lastErrorObject.updatedExisting;
@@ -197,7 +200,7 @@ class StreamConsumer {
       this._get_last_ts_processed ((err, ts) => {
         if (err) return cb (err);
 
-        debug ('creating cursos, last_ts_processed is %o', ts);
+        debug ('creating cursor, last_ts_processed is %o', ts);
 
         var cursor_opts = {
           awaitData: true,
