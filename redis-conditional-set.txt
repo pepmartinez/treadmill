@@ -1,0 +1,28 @@
+# Basic benchmarks
+# SET key val # 87489.06
+# SETRANGE key2 6 "Redis" # 75757.58 req/s
+# INCR  key 245 # 70224.72 req/s
+# INCRBY key 245 22 # 67114.09 req/s
+# EVAL SET key val # 46296.29 req/s
+
+# SETIFHIGHER (set or update key if new value is higher than current) # 41666.67 req/s
+# if not exists return OK , if updated return the increment  , if not updated return 0
+SCRIPT LOAD "local c = tonumber(redis.call('get', KEYS[1])); if c then if tonumber(ARGV[1]) > c then redis.call('set', KEYS[1], ARGV[1]) return tonumber(ARGV[1]) - c else return 0 end else return redis.call('set', KEYS[1], ARGV[1]) end"
+EVALSHA "2ab979bc4b89ab15c14805586c33d898f99a53d4" 1 key 245
+
+# SETIFLOWER (set or update key if new value is lower than current) # 41054.12 req/s
+# if not exists return OK , if updated return the decrement , if not updated return 0
+SCRIPT LOAD "local c = tonumber(redis.call('get', KEYS[1])); if c then if tonumber(ARGV[1]) < c then redis.call('set', KEYS[1], ARGV[1]) return tonumber(ARGV[1]) - c else return 0 end else return redis.call('set', KEYS[1], ARGV[1]) end"
+EVALSHA "3b99f44a33619dca62593053ce4bf52f7b432880" 1 key 3535
+
+
+# ZADDIFHIGHER (set or update sorted set  if new value is higher than current) # 34952.81 req/s
+# if not exists return "OK" , if updated return the increment, if not updated return 0
+SCRIPT LOAD "local c = tonumber(redis.call('zscore', KEYS[1], ARGV[1])); if c then  if tonumber(KEYS[2]) > c then redis.call('zadd', KEYS[1], KEYS[2], ARGV[1]) return tonumber(KEYS[2]) - c else return 0 end else redis.call('zadd', KEYS[1], KEYS[2], ARGV[1]) return 'OK' end"
+EVALSHA "8d1c75ea83b6f8f9ba5f7f048188da7ee6c4b35f" 2 set 10 member
+
+
+# ZADDIFLOWER (set or update sorted set if new value is lower than current) # 34831.07 req/s
+# if not exists return "OK" , if updated return the decrement, if not updated return 0
+SCRIPT LOAD "local c = tonumber(redis.call('zscore', KEYS[1], ARGV[1])); if c then  if tonumber(KEYS[2]) < c then redis.call('zadd', KEYS[1], KEYS[2], ARGV[1]) return tonumber(KEYS[2]) - c else return 0 end else redis.call('zadd', KEYS[1], KEYS[2], ARGV[1]) return 'OK' end"
+EVALSHA "1f8b6cf618d14c48e23b483fc42df71b6bea582e" 2 set 10 member

@@ -1,7 +1,7 @@
 {
   "name": "treadmill.js",
   "description": "kafka-like event streams over mongodb capped collections",
-  "version": "1.0.0",
+  "version": "0.0.0",
   "keywords": [
     "pubsub",
     "event",
@@ -15,7 +15,7 @@
   },
   "repository": {
     "type": "git",
-    "url": "https://github.com/pepmartineztreadmill.git"
+    "url": "https://github.com/pepmartinez/treadmill.git"
   },
   "author": {
     "name": "Jose Luis Martinez Juan",

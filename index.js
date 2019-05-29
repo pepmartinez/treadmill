@@ -39,7 +39,7 @@ Stream ('mongodb://localhost/akka', {}, (err, factory) => {
       });
     }, 100);
 
-
+/*
     stream.consumer ('group1', (err, consumer) => {
       if (err) return console.error (err);
 
@@ -48,13 +48,13 @@ Stream ('mongodb://localhost/akka', {}, (err, factory) => {
           if (_.floor (res.n % 1000) == 0) console.log ('c1', res);
           cb (err);
         });
-      }, 100000, err => {
+      }, 1111, err => {
         if (err) return console.error (err);
         console.log ('pop done');
       });
     });
-
-
+*/
+/*
     stream.consumer ('group1', (err, consumer) => {
       if (err) return console.error (err);
 
@@ -97,6 +97,8 @@ Stream ('mongodb://localhost/akka', {}, (err, factory) => {
         console.log ('pop done');
       });
     });
+*/
+
 
   });
 });
