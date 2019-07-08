@@ -4,14 +4,16 @@ var Timestamp =   require ('mongodb').Timestamp;
 var async = require ('async');
 var _ =     require ('lodash');
 
-var debug = require('debug')('stream');
+var Interfaces = require ('./interfaces');
+
+var debug = require('debug')('pure-mongodb-stream');
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-class StreamFactory {
-  constructor (mongo_url, opts) {
-    this._mongo_url = mongo_url;
-    this._opts = opts || {};
+class StreamFactory extends Interfaces.StreamFactory{
+  constructor (opts) {
+    super (opts);
+    this._mongo_url = this.opts().url;
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////
@@ -33,8 +35,9 @@ class StreamFactory {
   /////////////////////////////////////////////////////////////////////////////////////////////
   end (cb) {
     this._mongodb_cl.close (err => {
-      if (err) return cb (err);
+      if (err && cb) return cb (err);
       debug ('factory with url %s, opts %o closed ok', this._mongo_url, this._opts);
+      if (cb) cb ();
     });
   }
 
@@ -48,10 +51,9 @@ class StreamFactory {
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-class Stream {
+class Stream extends Interfaces.Stream {
   constructor (factory, name) {
-    this._factory = factory;
-    this._name = name;
+    super (factory, name);
   }
 
   /////////////////////////////////////////////////////////////////////////////////////////////
@@ -83,13 +85,9 @@ class Stream {
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-class StreamProducer {
+class StreamProducer extends Interfaces.StreamProducer {
   constructor (stream) {
-    this._stream = stream;
-    this._factory = stream._factory;
-    this._qname = stream._name;
-
-    debug ('created producer in stream %s', stream._name);
+    super (stream);
   }
 
 
@@ -127,14 +125,9 @@ class StreamProducer {
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
-class StreamConsumer {
+class StreamConsumer extends Interfaces.StreamConsumer {
   constructor (stream, group) {
-    this._stream = stream;
-    this._factory = stream._factory;
-    this._qname = stream._name;
-    this._group = group;
-
-    debug ('created consumer in stream %s for group %s', stream._name, group);
+    super (stream, group);
   }
 
 
@@ -242,7 +235,7 @@ class StreamConsumer {
 }
 
 
-module.exports = (mongo_url, opts, cb) => {
-  var f = new StreamFactory (mongo_url, opts);
+module.exports = (opts, cb) => {
+  var f = new StreamFactory (opts);
   f.init (cb);
 }

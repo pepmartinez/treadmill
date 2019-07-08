@@ -1,4 +1,4 @@
-var _ =     require ('lodash');
+var _ = require ('lodash');
 
 
 var Stream = require ('./pure-mongodb-stream');
@@ -17,14 +17,14 @@ function doTimes (fn, n, cb) {
 
 
 
-Stream ('mongodb://localhost/akka', {}, (err, factory) => {
+Stream ({url: 'mongodb://localhost/akka'}, (err, factory) => {
   if (err) return console.error (err);
   console.log ('init ook');
 
 
   factory.stream ('q1', (err, stream) => {
     if (err) return console.error (err);
-
+/*
     setTimeout (() => {
       stream.producer ((err, producer) => {
         if (err) return console.error (err);
@@ -38,13 +38,14 @@ Stream ('mongodb://localhost/akka', {}, (err, factory) => {
         });
       });
     }, 100);
-
-/*
+*/
+ /*
     stream.consumer ('group1', (err, consumer) => {
       if (err) return console.error (err);
 
       doTimes ((n, cb) => {
         consumer.pop ((err, res) => {
+          if (err) return console.error (err);
           if (_.floor (res.n % 1000) == 0) console.log ('c1', res);
           cb (err);
         });
@@ -54,12 +55,13 @@ Stream ('mongodb://localhost/akka', {}, (err, factory) => {
       });
     });
 */
-/*
+
     stream.consumer ('group1', (err, consumer) => {
       if (err) return console.error (err);
 
       doTimes ((n, cb) => {
         consumer.pop ((err, res) => {
+          if (err) return console.error (err);
           if (_.floor (res.n % 1000) == 0) console.log ('c2', res);
           cb (err);
         });
@@ -69,12 +71,13 @@ Stream ('mongodb://localhost/akka', {}, (err, factory) => {
       });
     });
 
-
+/*
     stream.consumer ('group1', (err, consumer) => {
       if (err) return console.error (err);
 
       doTimes ((n, cb) => {
         consumer.pop ((err, res) => {
+          if (err) return console.error (err);
           if (_.floor (res.n % 1000) == 0) console.log ('c3', res);
           cb (err);
         });
@@ -83,12 +86,14 @@ Stream ('mongodb://localhost/akka', {}, (err, factory) => {
         console.log ('pop done');
       });
     });
+*/
 
     stream.consumer ('group2', (err, consumer) => {
       if (err) return console.error (err);
 
       doTimes ((n, cb) => {
         consumer.pop ((err, res) => {
+          if (err) return console.error (err);
           if (_.floor (res.n % 1000) == 0) console.log ('cX', res);
           cb (err);
         });
@@ -97,7 +102,7 @@ Stream ('mongodb://localhost/akka', {}, (err, factory) => {
         console.log ('pop done');
       });
     });
-*/
+
 
 
   });
