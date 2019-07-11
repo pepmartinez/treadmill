@@ -84,10 +84,18 @@ class Stream extends Interfaces.Stream {
 }
 
 
+
 /////////////////////////////////////////////////////////////////////////////////////////////
 class StreamProducer extends Interfaces.StreamProducer {
   constructor (stream) {
     super (stream);
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////////////////////
+  _write (chunk, enc, next) {
+    debug ('called _write with ', chunk, enc);
+    this.push (chunk, next);
   }
 
 

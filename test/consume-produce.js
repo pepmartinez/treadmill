@@ -3,7 +3,7 @@ var _ =      require('lodash');
 var should = require('should');
 
 
-var Stream = require ('./pure-mongodb-stream');
+var Stream = require ('../pure-mongodb-stream');
 
 describe('TreadMill test', () => {
   describe('section 0', () => {
@@ -11,6 +11,7 @@ describe('TreadMill test', () => {
 
       Stream ({url: 'mongodb://localhost/akka'}, (err, factory) => {
         if (err) return console.error (err);
+        done (err);
       });
 
     });

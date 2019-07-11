@@ -1,5 +1,6 @@
 
 var debug = require('debug')('stream');
+var stream = require ('stream');
 
 class StreamFactory {
   constructor (opts) {
@@ -49,8 +50,9 @@ class Stream {
 }
 
 
-class StreamProducer {
+class StreamProducer extends stream.Writable {
   constructor (stream) {
+    super ({objectMode: true});
     this._stream = stream;
     this._factory = stream.factory ();
     this._qname = stream.name ();
