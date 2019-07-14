@@ -1,5 +1,7 @@
 var Stream = require ('./pure-mongodb-stream');
+var async = require ('async');
 var rand = require ('random-object').randomObject;
+var stringify = require('stringify-stream');
 
 function ros (opts) {
   opts = opts || {};
@@ -25,22 +27,26 @@ function ros (opts) {
 
 
 
+//stream.consumer ('group1', (err, consumer) => {
+//  if (err) return console.error (err);
 
-Stream ({url: 'mongodb://localhost/akka'}, (err, factory) => {
+async.waterfall ([
+  cb => Stream ({url: 'mongodb://localhost/akka'}, cb),
+  (factory, cb) =>  factory.stream ('q1', (err, qstream) => {
+    if (err) return cb (err);
+    cb (null, factory, qstream);
+  }),
+  (factory, qstream, cb) => qstream.producer ((err, producer) => {
+    if (err) return cb (err);
+    cb (null, factory, qstream, producer);
+  }),
+  (factory, qstream, producer, cb) => qstream.consumer ('group-1', (err, consumer) => {
+    if (err) return cb (err);
+    cb (null, factory, qstream, producer, consumer);
+  }),
+], (err, factory, qstream, producer, consumer) => {
   if (err) return console.error (err);
-  console.log ('init factory ok');
+  ros({ count: 11111}).pipe(producer);
 
-  factory.stream ('q1', (err, stream) => {
-    if (err) return console.error (err);
-    console.log ('init stream on q1 ok');
-
-    stream.producer ((err, producer) => {
-      if (err) return console.error (err);
-      console.log ('init stream.producer on q1 ok');
-
-      ros({ count: 10})
-      .pipe(producer);
-
-    });
-  });
+  consumer.pipe (stringify()).pipe (process.stdout);
 });

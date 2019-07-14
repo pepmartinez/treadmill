@@ -72,8 +72,9 @@ class StreamProducer extends stream.Writable {
   }
 }
 
-class StreamConsumer {
+class StreamConsumer extends stream.Readable {
   constructor (stream, group) {
+    super ({objectMode: true});
     this._stream = stream;
     this._factory = stream.factory ();
     this._qname = stream.name ();

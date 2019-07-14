@@ -181,6 +181,15 @@ class StreamConsumer extends Interfaces.StreamConsumer {
 
 
   /////////////////////////////////////////////////////////////////////////////////////////////
+  _read () {
+    this._try_a_pop ((err, ret) => {
+      if (err) return this.emit ('error', err);
+      this.push (ret);
+    });
+  }
+
+
+  /////////////////////////////////////////////////////////////////////////////////////////////
   _update_group_read_window (cb) {
     var q = {_id: {q: this._qname, g: this._group}, v: {$lt: this._last_read_id}};
     var upd = {$set: {v: this._last_read_id}};
