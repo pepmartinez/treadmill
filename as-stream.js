@@ -1,4 +1,6 @@
-var Stream = require ('./pure-mongodb-stream');
+// var Stream = require ('./pure-mongodb-stream');
+var Stream = require ('./simple-mongodb-stream');
+
 var async = require ('async');
 var rand = require ('random-object').randomObject;
 var stringify = require('stringify-stream');
@@ -46,7 +48,9 @@ async.waterfall ([
   }),
 ], (err, factory, qstream, producer, consumer) => {
   if (err) return console.error (err);
-  ros({ count: 11111}).pipe(producer);
+  var src = ros({ count: 100000});
+  src.on ('end', () => {console.log ('DONE PUSH'); process.exit(0)});
 
   consumer.pipe (stringify()).pipe (process.stdout);
+  src.pipe(producer);
 });
