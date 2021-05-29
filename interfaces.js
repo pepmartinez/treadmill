@@ -1,5 +1,5 @@
 
-var debug = require('debug')('stream');
+var debug = require('debug')('treadmill:stream');
 var stream = require ('stream');
 
 class StreamFactory {

@@ -6,7 +6,7 @@ var _ =     require ('lodash');
 
 var Interfaces = require ('./interfaces');
 
-var debug = require('debug')('simple-mongodb-stream');
+var debug = require('debug')('treadmill:simple-mongodb-stream');
 
 
 /////////////////////////////////////////////////////////////////////////////////////////////
@@ -134,6 +134,8 @@ class StreamConsumer extends Interfaces.StreamConsumer {
     this._ensure_cursor (err => {
       if (err) return cb (err);
 
+      debug ('reading from cursor');
+
       this._cursor.next ((err, elem) => {
         if (!elem) {
           debug ('cursor exhausted, reload...');
@@ -174,8 +176,12 @@ class StreamConsumer extends Interfaces.StreamConsumer {
         oplogReplay: true
       };
 
-      this._cursor = this._stream._capped_coll.find ({ts: {$gt: ts}}, cursor_opts);
-      debug ('cursor created');
+      var q = {
+        ts: {$gt: ts}
+      };
+
+      this._cursor = this._stream._capped_coll.find (q, cursor_opts);
+      debug ('cursor created with q %O, opts %O', q, cursor_opts);
       cb ();
     }
     else {

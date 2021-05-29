@@ -170,8 +170,12 @@ class StreamConsumer extends Interfaces.StreamConsumer {
           this._last_read_id = elem.ts;
 
           this._update_group_read_window ((err, is_ok) => {
-            if (is_ok) return cb (null, elem.pl);
-            debug ('element already processed, keep on looping');
+            if (is_ok) {
+              debug ('element not processed on group %s, return it', this._group);
+              return cb (null, elem.pl);
+            }
+
+            debug ('element already processed on group %s, keep on looping', this._group);
             this._try_a_pop (cb);
           });
         }
@@ -200,7 +204,7 @@ class StreamConsumer extends Interfaces.StreamConsumer {
     this._factory._last_ids_processed_coll.findOneAndUpdate (q, upd, (err, res) => {
       if (err) return cb (err);
       var ok = res.lastErrorObject.updatedExisting;
-      debug ('_update_group_read_window: got permission for the id %o: %s', this._last_read_id, ok);
+      debug ('_update_group_read_window[%s]: got permission for the id %o: %s', this._group, this._last_read_id, ok);
       cb (null, ok);
     });
   }
@@ -221,7 +225,7 @@ class StreamConsumer extends Interfaces.StreamConsumer {
           oplogReplay: true
         };
 
-        this._cursor = this._stream._capped_coll.find ({ts: {$gt: ts}}, cursor_opts);
+        this._cursor = this._stream._capped_coll.find ({ts: {$gt: ts}}, cursor_opts).sort ({$natural: -1});
         debug ('cursor created');
         cb ();
       });
