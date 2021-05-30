@@ -83,9 +83,10 @@ class StreamConsumer extends stream.Readable {
     debug ('created consumer in stream %s for group %s', stream.name (), group);
   }
 
+  stream ()  {return this._stream;}
   factory () {return this._factory;}
-  qname () {return this._qname;}
-  group () {return this._group;}
+  qname ()   {return this._qname;}
+  group ()   {return this._group;}
 
   init (cb) {
     setImmediate (() => cb (null, this));

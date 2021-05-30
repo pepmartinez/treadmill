@@ -4,9 +4,9 @@ var stringify = require('stringify-stream');
 var ros = require ('./test-lib/ros');
 
 // var Stream = require ('./pure-mongodb-stream');
-var Stream = require ('./simple-mongodb-stream');
+var Stream = require ('./bucket-mongodb-stream');
 
-
+/*
 async.waterfall ([
   cb => Stream ({url: 'mongodb://localhost/akka'}, cb),
   (factory, cb) =>  factory.stream ('q1', (err, qstream) => {
@@ -27,5 +27,25 @@ async.waterfall ([
   src.on ('end', () => {console.log ('DONE PUSH'); process.exit(0)});
 
   consumer.pipe (stringify()).pipe (process.stdout);
+  src.pipe(producer);
+});
+*/
+
+
+async.waterfall ([
+  cb => Stream ({url: 'mongodb://localhost/akka'}, cb),
+  (factory, cb) =>  factory.stream ('q1', (err, qstream) => {
+    if (err) return cb (err);
+    cb (null, factory, qstream);
+  }),
+  (factory, qstream, cb) => qstream.producer ((err, producer) => {
+    if (err) return cb (err);
+    cb (null, factory, qstream, producer);
+  }),
+], (err, factory, qstream, producer) => {
+  if (err) return console.error (err);
+  var src = ros({ count: 111, wait: 20});
+  src.on ('end', () => {console.log ('DONE PUSH'); process.exit(0)});
+
   src.pipe(producer);
 });
